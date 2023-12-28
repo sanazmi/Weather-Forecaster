@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+</head>
+
+<body>
+
+    <div class="search">
+        <input type="text" placeholder="Enter cities separated by commas">
+        <button onclick="checkWeather()">Get Weather</button>
+    </div>
+
+    <div class="results"></div>
+
+    <script>
+        const apiKey = "eba02635cd7e0458fcc2140660a09227";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+        async function checkWeather() {
+            const searchBox = document.querySelector(".search input");
+            const cities = searchBox.value.split(',').map(city => city.trim());
+            const resultsContainer = document.querySelector(".results");
+
+            resultsContainer.innerHTML = ""; // Clear previous results
+
+            for (const city of cities) {
+                try {
+                    const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+                    const data = await response.json();
+
+                    const resultDiv = document.createElement("div");
+                    resultDiv.innerHTML = `
+                        <h3>${data.name}</h3>
+                        <p>Temperature: ${data.main.temp}°C</p>
+                    `;
+
+                    const weatherIcon = document.createElement("img");
+                    weatherIcon.classList.add("weather-icon");
+
+                    if (data.weather[0].main == "Clouds") {
+                        weatherIcon.src = "./cloudy.png";
+                    } else if (data.weather[0].main == "Clear") {
+                        weatherIcon.src = "./cloudy_sunny.png";
+                    } else if (data.weather[0].main == "Rainy") {
+                        weatherIcon.src = "./rainy.png";
+                    } else if (data.weather[0].main == "Drizzle") {
+                        weatherIcon.src = "./drizzle.png";
+                    } else if (data.weather[0].main == "Mist") {
+                        weatherIcon.src = "./mist.png";
+                    }
+
+                    resultDiv.appendChild(weatherIcon);
+                    resultsContainer.appendChild(resultDiv);
+                } catch (error) {
+                    console.error(`Error fetching data for ${city}:`, error);
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>
